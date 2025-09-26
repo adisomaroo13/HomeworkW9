@@ -1,0 +1,58 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "width": 900,
+    "height": 520,
+    "title": "Clean electricity share by country (2024)",
+    "projection": {"type": "equalEarth"},
+    "layer": [
+      {
+        "data": {"sphere": true},
+        "mark": {"type": "geoshape", "fill": "#eef6fb"}
+      },
+      {
+        "data": {"graticule": {"step": [30, 30]}},
+        "mark": {"type": "geoshape", "stroke": "#ccd6dd", "strokeWidth": 0.5}
+      },
+      {
+        "data": {
+          "url": "https://raw.githubusercontent.com/FIT3179/Vega-Lite/main/3_choropleth_map/js/ne_110m_admin_0_countries.topojson",
+          "format": {"type": "topojson", "feature": "ne_110m_admin_0_countries"}
+        },
+        "mark": {"type": "geoshape", "fill": "#f2f2f2", "stroke": "white", "strokeWidth": 0.4}
+      },
+      {
+        "data": {
+          "url": "https://raw.githubusercontent.com/FIT3179/Vega-Lite/main/3_choropleth_map/js/ne_110m_admin_0_countries.topojson",
+          "format": {"type": "topojson", "feature": "ne_110m_admin_0_countries"}
+        },
+        "transform": [
+          {
+            "lookup": "properties.ISO_A3",
+            "from": {
+              "data": {
+                "url": "https://raw.githubusercontent.com/adisomaroo13/HomeworkW9/main/GER2025_2024_clean_country_percent.csv"
+              },
+              "key": "Country code",
+              "fields": ["Value"]
+            }
+          }
+        ],
+        "mark": {"type": "geoshape", "stroke": "white", "strokeWidth": 0.4},
+        "encoding": {
+          "color": {
+            "field": "Value",
+            "type": "quantitative",
+            "title": "Clean electricity share (%)",
+            "scale": { "scheme": "tealblues", "domain": [0, 100] },
+            "legend": { "orient": "right", "format": ".0f" }
+          },
+          "tooltip": [
+            { "field": "properties.NAME", "title": "Country" },
+            { "field": "properties.ISO_A3", "title": "ISO3" },
+            { "field": "Value", "type": "quantitative", "title": "Clean %", "format": ".1f" }
+          ]
+        }
+      }
+    ]
+  }
+  
