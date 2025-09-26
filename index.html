@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Homework W9 — Clean Electricity (2024)</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+
+  <style>
+    :root { color-scheme: light; }
+    html, body { height: 100%; }
+    body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background: #fff; }
+    header { text-align: center; padding: 16px 8px 0; }
+    #choropleth { max-width: 1100px; margin: 16px auto 32px; }
+    footer { text-align: center; color: #6b7280; font-size: 12px; padding-bottom: 16px; }
+    .error { max-width: 1000px; margin: 12px auto; color: #b00020; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1 style="margin:0; font-size:20px;">Clean Electricity Share by Country (2024)</h1>
+  </header>
+
+  <div id="choropleth"></div>
+
+  <script>
+    const CANDIDATES = ["js/w9hw.vg.json", "./js/w9hw.vg.json", "w9hw.vg.json", "./w9hw.vg.json"];
+
+    async function loadSpec() {
+      for (const path of CANDIDATES) {
+        try {
+          const res = await fetch(path, { cache: "no-store" });
+          if (!res.ok) { console.warn(`[vega] ${path} -> ${res.status}`); continue; }
+          const spec = await res.json();
+          return spec;
+        } catch (e) {
+          console.warn(`[vega] ${path} fetch failed:`, e);
+        }
+      }
+      throw new Error(
+        "Could not find w9hw.vg.json. Ensure the structure is either:\n" +
+        "  /index.html\n  /w9hw.vg.json\n  /GER2025_2024_clean_country_percent.csv\n" +
+        "or\n" +
+        "  /index.html\n  /js/w9hw.vg.json\n  /GER2025_2024_clean_country_percent.csv"
+      );
+    }
+
+    loadSpec()
+      .then(spec => vegaEmbed("#choropleth", spec, { actions: false, renderer: "canvas" }))
+      .catch(err => {
+        console.error("Vega-Embed error:", err);
+        const pre = document.createElement("pre");
+        pre.className = "error";
+        pre.textContent = "Failed to load visualization.\n\n" + String(err);
+        document.body.appendChild(pre);
+      });
+  </script>
+</body>
+</html>
